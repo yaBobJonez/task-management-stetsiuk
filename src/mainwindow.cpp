@@ -85,7 +85,18 @@ void MainWindow::on_closeAction_triggered()
 
 void MainWindow::on_openAction_triggered()
 {
-    
+    QString filename = QFileDialog::getOpenFileName(this, "Відкрити дошку", {}, "CSV (*.csv)");
+    if (filename.isEmpty()) return;
+    QFile f(filename);
+    if (!f.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::critical(this, "Помилка відкриття", "Не вдалося прочитати вказаний файл.");
+        return;
+    }
+    saveFile = filename;
+    QTextStream is(&f);
+    ui->todoList->setModel(new QStringListModel( is.readLine().split(",", Qt::SkipEmptyParts) ));
+    ui->wipList->setModel(new QStringListModel( is.readLine().split(",", Qt::SkipEmptyParts) ));
+    ui->doneList->setModel(new QStringListModel( is.readLine().split(",", Qt::SkipEmptyParts) ));
 }
 
 
