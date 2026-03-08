@@ -53,13 +53,27 @@ void MainWindow::on_removeAction_triggered()
 
 void MainWindow::on_saveAsAction_triggered()
 {
-    
+    saveFile = QFileDialog::getSaveFileName(this, "Зберегти дошку", {}, "CSV (*.csv)");
+    if (saveFile.isEmpty()) return;
+    ui->saveAction->trigger();
 }
 
 
 void MainWindow::on_saveAction_triggered()
 {
-    
+    if (saveFile.isEmpty()) {
+        ui->saveAsAction->trigger();
+        return;
+    }
+    QFile f(saveFile);
+    if (!f.open(QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::critical(this, "Помилка збереження", "Не вдалося відкрити файл на запис.");
+        return;
+    }
+    QTextStream os(&f);
+    os << qobject_cast<QStringListModel*>(ui->todoList->model())->stringList().join(",") << "\n";
+    os << qobject_cast<QStringListModel*>(ui->wipList->model())->stringList().join(",") << "\n";
+    os << qobject_cast<QStringListModel*>(ui->doneList->model())->stringList().join(",") << "\n";
 }
 
 
