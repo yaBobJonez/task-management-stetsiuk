@@ -22,19 +22,29 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_addAction_triggered()
 {
-    
+    auto list = qobject_cast<QListView*>(QApplication::focusWidget());
+    if (list == nullptr) return;
+    auto model = list->model();
+    model->insertRow(model->rowCount());
+    auto index = model->index(model->rowCount() - 1, 0);
+    list->setCurrentIndex(index);
+    list->edit(index);
 }
 
 
 void MainWindow::on_editAction_triggered()
 {
-    
+    auto list = qobject_cast<QListView*>(QApplication::focusWidget());
+    if (list == nullptr) return;
+    list->edit(list->currentIndex());
 }
 
 
 void MainWindow::on_removeAction_triggered()
 {
-    
+    auto list = qobject_cast<QListView*>(QApplication::focusWidget());
+    if (list == nullptr) return;
+    list->model()->removeRow(list->currentIndex().row());
 }
 
 
@@ -64,7 +74,15 @@ void MainWindow::on_openAction_triggered()
 
 void MainWindow::on_quitAction_triggered()
 {
-    
+    QMessageBox::StandardButton res = QMessageBox::question(
+        this, "Вихід з програми",
+        "Чи хочете Ви зберегти дошку перед виходом?",
+        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+        QMessageBox::Save
+        );
+    if (res == QMessageBox::Cancel) return;
+    if (res == QMessageBox::Save) ui->saveAction->trigger();
+    QApplication::quit();
 }
 
 
