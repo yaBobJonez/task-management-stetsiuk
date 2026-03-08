@@ -79,7 +79,7 @@ void MainWindow::on_saveAction_triggered()
 
 void MainWindow::on_closeAction_triggered()
 {
-    
+    saveFile.truncate(0);
 }
 
 
