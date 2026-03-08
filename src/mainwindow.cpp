@@ -29,6 +29,7 @@ void MainWindow::on_addAction_triggered()
     auto index = model->index(model->rowCount() - 1, 0);
     list->setCurrentIndex(index);
     list->edit(index);
+    qDebug() << "Added new task.";
 }
 
 
@@ -37,6 +38,7 @@ void MainWindow::on_editAction_triggered()
     auto list = qobject_cast<QListView*>(QApplication::focusWidget());
     if (list == nullptr) return;
     list->edit(list->currentIndex());
+    qDebug() << "Editing task.";
 }
 
 
@@ -45,6 +47,7 @@ void MainWindow::on_removeAction_triggered()
     auto list = qobject_cast<QListView*>(QApplication::focusWidget());
     if (list == nullptr) return;
     list->model()->removeRow(list->currentIndex().row());
+    qDebug() << "Removed task.";
 }
 
 
