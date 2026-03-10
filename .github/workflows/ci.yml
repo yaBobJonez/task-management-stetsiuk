@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
   build-test-analyze:
     runs-on: ubuntu-latest
@@ -27,7 +31,7 @@ jobs:
 
       - name: Збірка проєкту
         run: |
-          cmake -S . -B build -G Ninja
+          cmake -S . -B build -G Ninja -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
           cmake --build build --parallel
       
       - name: Збереження виконуваного файлу
@@ -53,9 +57,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          style: 'file'
+          style: ''
           tidy-checks: ''
+          database: 'build'
           thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+          format-review: true
 
       - name: Статичний аналіз (cppcheck)
         uses: deep5050/cppcheck-action@main
