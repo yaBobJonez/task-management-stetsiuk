@@ -1,0 +1,63 @@
+name: 'CI pipeline'
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-test-analyze:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Отримання репозиторію
+        uses: actions/checkout@v6
+      
+      - name: Встановлення Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          cache: 'true'
+
+      - name: Встановлення GTest
+        run: |
+          sudo apt update
+          sudo apt install -y libgtest-dev
+
+      - name: Збірка проєкту
+        run: |
+          cmake -S . -B build -G Ninja
+          cmake --build build --parallel
+      
+      - name: Збереження виконуваного файлу
+        uses: actions/upload-artifact@v6
+        with:
+          name: TaskList_Demo
+          path: build/src/TaskList
+
+      - name: Запуск тестів
+        run: |
+          cd build/tests
+          ctest --output-on-failure --output-junit results.xml
+      
+      - name: Відображення результатів тестів
+        uses: dorny/test-reporter@v2
+        with:
+          name: Unit-тести
+          path: build/tests/results.xml
+          reporter: java-junit
+
+      - name: Лінтінг (clang-tidy)
+        uses: cpp-linter/cpp-linter-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          style: 'file'
+          tidy-checks: ''
+          thread-comments: ${{ github.event_name == 'pull_request' && 'update' }}
+
+      - name: Статичний аналіз (cppcheck)
+        uses: deep5050/cppcheck-action@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN}}
