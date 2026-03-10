@@ -37,8 +37,8 @@ jobs:
       - name: Збереження виконуваного файлу
         uses: actions/upload-artifact@v6
         with:
-          name: TaskList_Demo
-          path: build/src/TaskList
+          name: TaskManager_Demo
+          path: build/src/TaskManager
 
       - name: Запуск тестів
         run: |
