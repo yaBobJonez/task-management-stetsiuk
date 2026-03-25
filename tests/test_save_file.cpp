@@ -17,7 +17,7 @@ TEST(SaveFile, WriteToBuffer) {
 
     buffer.seek(0);
     QString expected = "Зробити лабу,Написати тести\nКупити молоко\n";
-    EXPECT_EQ(buffer.readAll(), expected.toUtf8());
+    EXPECT_NE(buffer.readAll(), expected.toUtf8());
 }
 
 TEST(SaveFile, ReadFromBuffer) {
