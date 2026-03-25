@@ -123,7 +123,7 @@ jobs:
       - name: Імітація smoke-тестів
         run: |
           echo "1. Перевірка, що виконуваний файл існує"
-          if [ ! -e staging/TaskManager ]; then
+          if [ -f staging/TaskManager ]; then
             echo "✓ Pass"
           else
             echo "✗ FAIL"
